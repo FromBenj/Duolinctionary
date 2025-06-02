@@ -12,6 +12,7 @@ The created file is also sent to a Dropbox folder, so that you can check it when
 - PHP Symfony framework
 - Composer
 - PhpOffice
+- Spatie\Dropbox
 
 ## License
 MIT
