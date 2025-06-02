@@ -10,12 +10,12 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\Routing\Attribute\Route;
 
-final class DictionnaryController extends AbstractController
+final class DictionaryController extends AbstractController
 {
-    #[Route('/dictionnary', name: 'app_dictionnary')]
+    #[Route('/dictionary', name: 'app_dictionary')]
     public function index(): Response
     {
-        $rawHtml = $this->getParameter('kernel.project_dir') . '/assets/ben_dictionnary.html';
+        $rawHtml = $this->getParameter('kernel.project_dir') . '/assets/ben_dictionary.html';
         $htmlContent = file_get_contents($rawHtml);
         $htmlCleaned = preg_replace('/<svg(.*?)\/svg>/s', '', $htmlContent);
 
@@ -23,11 +23,11 @@ final class DictionnaryController extends AbstractController
         $wordsCrawler = $crawler
             ->filter('h3');
         $wordsCount = $wordsCrawler->count();
-        $dictionnaryArray = [];
+        $dictionaryArray = [];
         for ($i = 0; $i < $wordsCount; $i++) {
             $word = $wordsCrawler->eq($i)->text();
             $translation = $wordsCrawler->eq($i)->nextAll()->first()->text();
-            $dictionnaryArray[] = [
+            $dictionaryArray[] = [
                 'word' => $word,
                 'translation' => $translation,
             ];
@@ -36,7 +36,7 @@ final class DictionnaryController extends AbstractController
         $document = new PhpWord();
 
         $section = $document->addSection();
-        $section->addText('My DuoLingo Dictionnary',
+        $section->addText('My DuoLingo Dictionary',
             [
                 'size' => 20,
                 'bold' => true,
@@ -61,15 +61,15 @@ final class DictionnaryController extends AbstractController
         );
         $section->addTextBreak(4);
 
-        foreach ($dictionnaryArray as $dictionnary) {
+        foreach ($dictionaryArray as $dictionary) {
             $textrun = $section->addTextRun();
-            $textrun->addText($dictionnary['word'] . ': ',
+            $textrun->addText($dictionary['word'] . ': ',
                 [
                     'bold' => true,
                     'size' => 12,
                 ]
             );
-            $textrun->addText($dictionnary['translation'],
+            $textrun->addText($dictionary['translation'],
                 [
                     'italic' => true,
                     'size' => 12,
