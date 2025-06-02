@@ -1,4 +1,4 @@
-# Dualinctionnaly
+# Duolinctionary
 ### _Side project to get Duolingo words that I have learnt_
 
 ## What it is

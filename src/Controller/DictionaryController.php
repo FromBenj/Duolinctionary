@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Service\DropboxService;
 use PhpOffice\PhpWord\SimpleType\Jc;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Response;
 use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpWord\PhpWord;
@@ -13,7 +15,7 @@ use Symfony\Component\Routing\Attribute\Route;
 final class DictionaryController extends AbstractController
 {
     #[Route('/dictionary', name: 'app_dictionary')]
-    public function index(): Response
+    public function index(DropboxService $dropboxService): Response
     {
         $rawHtml = $this->getParameter('kernel.project_dir') . '/assets/ben_dictionary.html';
         $htmlContent = file_get_contents($rawHtml);
@@ -86,7 +88,16 @@ final class DictionaryController extends AbstractController
         // Create response
         $response = new Response(file_get_contents($tempDocFile));
         $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
-        $response->headers->set('Content-Disposition', 'attachment;filename="My_Duolinctionnary.docx"');
+        $response->headers->set('Content-Disposition', 'attachment;filename="My_Duolinctionnary_' . date('d-m-Y') . '.docx"');
+
+        $file = new UploadedFile(
+            $tempDocFile,
+            'My_Duolinctionnary_' . date('d-m-Y') . '.docx',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            null,
+            true // Set to true to move the file instead of copying it
+        );
+        $dropboxService->uploadFile($file);
 
         unlink($tempDocFile);
 
